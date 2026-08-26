@@ -22,9 +22,9 @@
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen font-sans">
 
-  <!-- Status SharePoint / OneDrive -->
-  <div id="cloudStatus" class="bg-blue-600 text-white text-xs py-1 px-4 text-center font-medium transition-all flex justify-center items-center gap-2">
-    <span>☁️ Conectando ao SharePoint/OneDrive Corporativo (Pasta Dashboard Satélites)...</span>
+  <!-- Status de Armazenamento -->
+  <div id="cloudStatus" class="bg-emerald-700 text-white text-xs py-1 px-4 text-center font-medium transition-all flex justify-center items-center gap-2">
+    <span>🔒 Ambiente Seguro: Os dados da planilha permanecem salvos no seu navegador.</span>
   </div>
 
   <!-- Header Gerencial -->
@@ -46,13 +46,9 @@
       </div>
 
       <div class="flex items-center gap-3">
-        <button onclick="loadFromSharePointFolder()" class="bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow transition flex items-center gap-2">
-          <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-          <span>Sincronizar OneDrive</span>
-        </button>
-        <label class="cursor-pointer bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow transition flex items-center gap-2 border border-slate-700">
+        <label class="cursor-pointer bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow transition flex items-center gap-2">
           <i data-lucide="file-up" class="w-4 h-4"></i>
-          <span>Carregar Local (.xlsx)</span>
+          <span>Carregar Planilha Satélites (.xlsx)</span>
           <input type="file" id="excelFileInput" accept=".xlsx, .xls" class="hidden">
         </label>
       </div>
@@ -245,9 +241,6 @@
   </main>
 
   <script>
-    // Link direto para leitura do arquivo da pasta no SharePoint
-    const SHAREPOINT_FILE_URL = 'https://autoglass365-my.sharepoint.com/:x:/g/personal/daniel_miguel_autoglass_com_br/EVyIIn2X_w9KroXoX4s41r8BDfX4k964-1RjZ_0q5vGfLw?download=1';
-
     lucide.createIcons();
 
     let globalRawRows = [];
@@ -260,27 +253,34 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       setupEventListeners();
-      loadFromSharePointFolder();
+      loadFromLocalStorage();
     });
 
-    async function loadFromSharePointFolder() {
+    function loadFromLocalStorage() {
+      const stored = localStorage.getItem('satelites_local_db');
       const statusEl = document.getElementById('cloudStatus');
-      statusEl.className = "bg-blue-600 text-white text-xs py-1 px-4 text-center font-medium flex justify-center items-center gap-2";
-      statusEl.innerText = "☁️ Carregando dados da pasta Dashboard Satélites no OneDrive...";
 
-      try {
-        const response = await fetch(SHAREPOINT_FILE_URL, { cache: 'no-store' });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-        const arrayBuffer = await response.arrayBuffer();
-        processWorkbookData(arrayBuffer);
-
-        statusEl.className = "bg-emerald-600 text-white text-xs py-1 px-4 text-center font-medium flex justify-center items-center gap-2";
-        statusEl.innerText = "✓ Dashboard sincronizado com a planilha do OneDrive!";
-      } catch (err) {
-        console.error(err);
+      if (stored) {
+        try {
+          globalRawRows = JSON.parse(stored);
+          initDataProcessing();
+          applyGlobalFilters();
+          statusEl.className = "bg-emerald-700 text-white text-xs py-1 px-4 text-center font-medium flex justify-center items-center gap-2";
+          statusEl.innerText = "✓ Dados carregados da memória local com sucesso!";
+        } catch (e) {
+          console.error(e);
+        }
+      } else {
         statusEl.className = "bg-amber-600 text-white text-xs py-1 px-4 text-center font-medium flex justify-center items-center gap-2";
-        statusEl.innerText = "💡 Abra a sessão no Microsoft 365 ou faça o upload manual do arquivo .xlsx abaixo.";
+        statusEl.innerText = "💡 Faça o upload da planilha (.xlsx) para carregar e salvar os indicadores nesta máquina.";
+      }
+    }
+
+    function saveToLocalStorage() {
+      try {
+        localStorage.setItem('satelites_local_db', JSON.stringify(globalRawRows));
+      } catch (e) {
+        console.error('Erro ao salvar no localStorage:', e);
       }
     }
 
@@ -353,6 +353,7 @@
         }
       });
 
+      saveToLocalStorage();
       initDataProcessing();
       applyGlobalFilters();
     }
@@ -718,8 +719,8 @@
       reader.onload = function(evt) {
         try {
           processWorkbookData(evt.target.result);
-          document.getElementById('cloudStatus').className = "bg-emerald-600 text-white text-xs py-1 px-4 text-center font-medium flex justify-center items-center gap-2";
-          document.getElementById('cloudStatus').innerText = "✓ Planilha local processada com sucesso!";
+          document.getElementById('cloudStatus').className = "bg-emerald-700 text-white text-xs py-1 px-4 text-center font-medium flex justify-center items-center gap-2";
+          document.getElementById('cloudStatus').innerText = "✓ Planilha processada e salva com sucesso neste navegador!";
         } catch (err) {
           console.error(err);
           alert('Ocorreu um erro ao processar o Excel. Verifique o formato do arquivo.');
