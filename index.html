@@ -970,7 +970,15 @@
                       if (!row) continue;
 
                       const desc = String(row[col] || '').trim();
-                      const valRaw = row[col + 1];
+                      
+                      // Busca o valor numérico nas colunas adjacentes da tabela (col+1, col+2, col+3)
+                      let valRaw = row[col + 1];
+                      if ((valRaw === undefined || valRaw === null || String(valRaw).trim() === '') && row[col + 2] !== undefined) {
+                        valRaw = row[col + 2];
+                      }
+                      if ((valRaw === undefined || valRaw === null || String(valRaw).trim() === '') && row[col + 3] !== undefined) {
+                        valRaw = row[col + 3];
+                      }
 
                       if (desc) {
                         blocoValores[desc] = parseValueNumber(valRaw);
