@@ -584,17 +584,28 @@
       if (!itemValores) return 0;
       const cleanTarget = cleanString(targetKey);
 
+      // Correspondência exata normalizada
       for (const [k, v] of Object.entries(itemValores)) {
         if (cleanString(k) === cleanTarget) {
           return v;
         }
       }
 
-      // Fallback específico para variações de CMV PRODUTOS OS
+      // Regra estrita para CMV BALCÃO vs CMV OS
+      if (cleanTarget.includes('BALCÃO') || cleanTarget.includes('BALCAO')) {
+        for (const [k, v] of Object.entries(itemValores)) {
+          const cK = cleanString(k);
+          if (cK.includes('CMV') && (cK.includes('BALCÃO') || cK.includes('BALCAO'))) {
+            return v;
+          }
+        }
+        return 0; // Garante que fica zerado se não houver entrada explícita de BALCÃO
+      }
+
       if (cleanTarget.includes('CMV') && cleanTarget.includes('OS')) {
         for (const [k, v] of Object.entries(itemValores)) {
           const cK = cleanString(k);
-          if (cK.includes('CMV') && cK.includes('OS') && !cK.includes('BALCÃO')) {
+          if (cK.includes('CMV') && cK.includes('OS') && !cK.includes('BALCÃO') && !cK.includes('BALCAO')) {
             return v;
           }
         }
