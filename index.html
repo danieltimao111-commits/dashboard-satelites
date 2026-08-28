@@ -33,15 +33,15 @@
       
       <div class="flex items-center gap-4">
         <div class="bg-white p-2 rounded-lg shadow-inner flex items-center justify-center h-12 border border-slate-200">
-          <img src="logo-autoglass.png" alt="Logo Autoglass" class="h-full w-auto object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <img src="LOGO.jpg" alt="Logo Autoglass" class="h-full w-auto object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
           <span style="display:none;" class="font-bold text-blue-900 text-sm">AUTOGLASS</span>
         </div>
 
         <div>
           <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-            Unidades Satélites <span class="text-xs font-semibold bg-blue-600 text-white px-2 py-0.5 rounded-full uppercase">Visão Gerencial</span>
+            Unidades Satélites <span class="text-xs font-semibold bg-blue-600 text-white px-2 py-0.5 rounded-full uppercase">Visão Gerencial & DRE</span>
           </h1>
-          <p class="text-xs text-slate-400">Acompanhamento de agendamentos, realizações, faturamento e produtos</p>
+          <p class="text-xs text-slate-400">Acompanhamento de agendamentos, realizações, faturamento e resultado financeiro (DRE)</p>
         </div>
       </div>
 
@@ -58,19 +58,18 @@
 
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-    <!-- FILTROS: UNIDADE + MÊS + GRANULARIDADE -->
+    <!-- FILTROS GERAIS DA APLICAÇÃO -->
     <section class="glass-card p-5 bg-white border-l-4 border-l-blue-600">
       <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <div>
           <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
             <i data-lucide="filter" class="w-4 h-4 text-blue-600"></i> Filtros & Granularidade
           </h2>
-          <p class="text-xs text-slate-500">Selecione uma unidade, um mês específico ou alterne entre Mês e Dia</p>
+          <p class="text-xs text-slate-500">Selecione a unidade e o período para atualizar os indicadores operacionais e a DRE</p>
         </div>
 
         <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
           
-          <!-- SELETOR MÊS A MÊS x DIA A DIA -->
           <div class="bg-slate-100 p-1 rounded-lg border border-slate-200 flex items-center gap-1">
             <button id="btnGranularidadeMes" onclick="setGranularidade('mes')" class="px-3 py-1.5 text-xs font-bold rounded-md bg-white text-blue-600 shadow-sm transition">
               📅 Mês a Mês
@@ -80,14 +79,12 @@
             </button>
           </div>
 
-          <!-- SELETOR DE MÊS ESPECÍFICO -->
           <div class="w-full sm:w-44">
             <select id="mainMesFilter" class="w-full bg-slate-50 border border-slate-300 font-semibold text-slate-700 text-xs rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none">
               <option value="">🗓️ Todos os Meses</option>
             </select>
           </div>
 
-          <!-- SELETOR DE UNIDADE -->
           <div class="w-full sm:w-56">
             <select id="mainUnidadeFilter" class="w-full bg-slate-50 border border-slate-300 font-semibold text-slate-700 text-xs rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none">
               <option value="">🌐 Visão Macro (Todas)</option>
@@ -101,9 +98,8 @@
       </div>
     </section>
 
-    <!-- CARDS DOS KPIS -->
+    <!-- CARDS DOS KPIS OPERACIONAIS -->
     <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-      
       <div class="glass-card p-4 flex items-center gap-3">
         <div class="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl shrink-0"><i data-lucide="calendar" class="w-5 h-5"></i></div>
         <div class="min-w-0">
@@ -134,7 +130,7 @@
       <div class="glass-card p-4 flex items-center gap-3">
         <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl shrink-0"><i data-lucide="dollar-sign" class="w-5 h-5"></i></div>
         <div class="min-w-0">
-          <p class="text-[11px] font-semibold text-slate-500 uppercase truncate">4. Faturamento</p>
+          <p class="text-[11px] font-semibold text-slate-500 uppercase truncate">4. Faturamento Bruto</p>
           <p id="kpiFaturamento" class="text-base sm:text-lg font-black text-slate-900 tracking-tight leading-tight my-0.5">R$ 0,00</p>
           <span class="text-[10px] text-emerald-600 font-bold block truncate">Somente OS Realizadas</span>
         </div>
@@ -148,12 +144,91 @@
           <span class="text-[10px] text-slate-400 block truncate">Faturamento / OS Realizada</span>
         </div>
       </div>
+    </section>
+
+    <!-- SEÇÃO DRE GERENCIAL -->
+    <section class="glass-card p-5 border-l-4 border-l-emerald-600">
+      <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
+        <div>
+          <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wide flex items-center gap-2">
+            <i data-lucide="calculator" class="w-4 h-4 text-emerald-600"></i> Demonstração do Resultado do Exercício (DRE)
+          </h3>
+          <p class="text-xs text-slate-500">Resultado financeiro consolidado por unidade e mês</p>
+        </div>
+      </div>
+
+      <!-- CARDS DE RESUMO DRE -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <p class="text-xs font-semibold text-slate-500 uppercase">Receita Líquida</p>
+          <p id="dreCardReceitaLiquida" class="text-lg font-bold text-slate-800 my-1">R$ 0,00</p>
+          <span class="text-[10px] text-slate-400">Após impostos e devoluções</span>
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <p class="text-xs font-semibold text-slate-500 uppercase">Lucro Bruto</p>
+          <p id="dreCardLucroBruto" class="text-lg font-bold text-blue-600 my-1">R$ 0,00</p>
+          <span class="text-[10px] text-slate-400">Receita Líquida - CMV</span>
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <p class="text-xs font-semibold text-slate-500 uppercase">Lucro Líquido</p>
+          <p id="dreCardLucroLiquido" class="text-lg font-bold text-emerald-600 my-1">R$ 0,00</p>
+          <span class="text-[10px] text-slate-400">Resultado final do período</span>
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <p class="text-xs font-semibold text-slate-500 uppercase">Margem Operacional</p>
+          <p id="dreCardMargem" class="text-lg font-bold text-purple-600 my-1">0,00%</p>
+          <span class="text-[10px] text-slate-400">Lucro Líquido / Faturamento</span>
+        </div>
+      </div>
+
+      <!-- TABELA DRE COMPARATIVA -->
+      <div class="overflow-x-auto border border-slate-200 rounded-xl mb-6">
+        <table class="w-full text-left text-xs text-slate-600">
+          <thead class="bg-slate-900 text-white uppercase font-semibold">
+            <tr id="dreTableHeader">
+              <th class="p-3 w-72">Descrição DRE Mensal</th>
+            </tr>
+          </thead>
+          <tbody id="dreTableBody" class="divide-y divide-slate-200 bg-white"></tbody>
+        </table>
+      </div>
+
+      <!-- PAINEL DE PREMISSAS E OBSERVAÇÕES DA DRE -->
+      <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2 mb-3">
+          <i data-lucide="info" class="w-4 h-4 text-blue-600"></i> Premissas & Observações de Cálculo da DRE
+        </h4>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          <div class="flex items-start gap-2 bg-white p-2.5 rounded-lg border border-slate-200">
+            <span class="font-bold text-slate-700 whitespace-nowrap">(-) Imposto s/ Vendas e Serviços:</span>
+            <span class="text-slate-600">% de proporcionalidade da DRE de MG79</span>
+          </div>
+
+          <div class="flex items-start gap-2 bg-white p-2.5 rounded-lg border border-slate-200">
+            <span class="font-bold text-slate-700 whitespace-nowrap">(-) Despesas Bancárias:</span>
+            <span class="text-slate-600">% de proporcionalidade da DRE de MG79</span>
+          </div>
+
+          <div class="flex items-start gap-2 bg-white p-2.5 rounded-lg border border-slate-200">
+            <span class="font-bold text-slate-700 whitespace-nowrap">(-) Despesas Gerais:</span>
+            <span class="text-slate-600">Custo com CMO, Deslocamento, Aluguel e Baixa de Consumo</span>
+          </div>
+
+          <div class="flex items-start gap-2 bg-white p-2.5 rounded-lg border border-slate-200">
+            <span class="font-bold text-slate-700 whitespace-nowrap">(-) Depreciação:</span>
+            <span class="text-slate-600">Depreciação de ativos patrimoniais</span>
+          </div>
+        </div>
+      </div>
 
     </section>
 
-    <!-- GRÁFICOS GERENCIAIS -->
+    <!-- GRÁFICOS GERENCIAIS OPERACIONAIS -->
     <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      
       <div class="glass-card p-5">
         <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
           <h3 class="font-bold text-slate-800 text-sm uppercase flex items-center gap-2">
@@ -173,7 +248,6 @@
         </div>
         <div class="h-64 relative"><canvas id="chartFinanceiro"></canvas></div>
       </div>
-
     </section>
 
     <!-- VISÃO POR AGRUPAMENTO DE PRODUTO -->
@@ -209,12 +283,12 @@
       </div>
     </section>
 
-    <!-- TABELA CONSOLIDADA DOS DADOS -->
+    <!-- TABELA OPERACIONAL CONSOLIDADA -->
     <section class="glass-card p-5">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 pb-3 border-b border-slate-100">
         <div>
           <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wide flex items-center gap-2">
-            <i data-lucide="table" class="w-4 h-4 text-indigo-600"></i> Tabela Detalhada dos Indicadores
+            <i data-lucide="table" class="w-4 h-4 text-indigo-600"></i> Tabela Detalhada dos Indicadores Operacionais
           </h3>
           <p class="text-xs text-slate-500">Métricas consolidadas de acordo com a unidade e granularidade selecionada</p>
         </div>
@@ -241,19 +315,26 @@
   </main>
 
   <script>
-    // Configurações do novo BIN exclusivo para as Unidades Satélites
     const JSONBIN_BIN_ID = '6a8ef4baf5f4af5e29450c24';
     const JSONBIN_MASTER_KEY = '$2a$10$oozFSlEFkacYuzRbLpFgROQrC5YKMK11lxM0ZqaYTS7oV2Jn1Egje';
 
     lucide.createIcons();
 
     let globalRawRows = [];
+    let globalDreData = [];
     let granularidade = 'mes';
     let chartOpInstance = null;
     let chartFinInstance = null;
     let chartProdInstance = null;
 
     const MESES_NOME = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+
+    const PREMISSAS_DRE = {
+      '(-) IMPOSTO SOBRE VENDAS E SERVIÇOS': '% de proporcionalidade da DRE de MG79',
+      '(-) DESPESAS BANCÁRIAS': '% de proporcionalidade da DRE de MG79',
+      '(-) DESPESAS GERAIS': 'Custo com CMO, Deslocamento, aluguel e baixa de consumo',
+      '(-) DEPRECIAÇÃO': 'Depreciação de ativos patrimoniais'
+    };
 
     window.addEventListener('DOMContentLoaded', () => {
       setupEventListeners();
@@ -264,7 +345,7 @@
       if (val === null || val === undefined || val === '') return 0;
       if (typeof val === 'number') return isNaN(val) ? 0 : val;
       
-      let s = String(val).replace('R$', '').replace(/\s/g, '').trim();
+      let s = String(val).replace('R$', '').replace('%', '').replace(/\s/g, '').trim();
       if (!s) return 0;
 
       if (s.includes(',')) {
@@ -306,17 +387,19 @@
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
         const result = await response.json();
-        if (result.record && result.record.satelitesRaw) {
+        if (result.record) {
           globalRawRows = result.record.satelitesRaw || [];
+          globalDreData = result.record.dreData || [];
+
           initDataProcessing();
           applyGlobalFilters();
 
           const dataAtualizacao = result.record.updatedAtSatelites ? new Date(result.record.updatedAtSatelites).toLocaleString('pt-BR') : 'recente';
           statusEl.className = "bg-emerald-600 text-white text-xs py-1 px-4 text-center font-medium";
-          statusEl.innerText = `✓ Dados de Satélites sincronizados (Última atualização: ${dataAtualizacao})`;
+          statusEl.innerText = `✓ Dados de Satélites e DRE sincronizados (Última atualização: ${dataAtualizacao})`;
         } else {
           statusEl.className = "bg-amber-600 text-white text-xs py-1 px-4 text-center font-medium";
-          statusEl.innerText = "⚠️ Nenhum dado de Satélites encontrado. Faça o upload da planilha.";
+          statusEl.innerText = "⚠️ Nenhum dado encontrado na nuvem. Faça o upload da planilha.";
         }
       } catch (err) {
         console.error(err);
@@ -328,11 +411,12 @@
     async function saveDataToCloud() {
       const statusEl = document.getElementById('cloudStatus');
       statusEl.className = "bg-amber-500 text-white text-xs py-1 px-4 text-center font-medium";
-      statusEl.innerText = "⏳ Enviando novos dados de Satélites para a nuvem...";
+      statusEl.innerText = "⏳ Enviando novos dados para a nuvem...";
 
       try {
         const payload = {
           satelitesRaw: globalRawRows,
+          dreData: globalDreData,
           updatedAtSatelites: new Date().toISOString()
         };
 
@@ -351,8 +435,8 @@
         }
 
         statusEl.className = "bg-emerald-600 text-white text-xs py-1 px-4 text-center font-medium";
-        statusEl.innerText = "✓ Planilha de Satélites salva na nuvem com sucesso!";
-        alert('Dados salvos na nuvem com sucesso! Agora qualquer pessoa que acessar o link verá as informações atualizadas.');
+        statusEl.innerText = "✓ Planilha e DRE salvas na nuvem com sucesso!";
+        alert('Dados salvos na nuvem com sucesso!');
       } catch (err) {
         console.error(err);
         statusEl.className = "bg-rose-600 text-white text-xs py-1 px-4 text-center font-medium";
@@ -362,7 +446,10 @@
     }
 
     function initDataProcessing() {
-      const unidades = [...new Set(globalRawRows.map(d => d.unidade))].filter(Boolean).sort();
+      const unidadesOp = globalRawRows.map(d => d.unidade);
+      const unidadesDre = globalDreData.map(d => d.unidade);
+      const unidades = [...new Set([...unidadesOp, ...unidadesDre])].filter(Boolean).sort();
+
       const selectUni = document.getElementById('mainUnidadeFilter');
       selectUni.innerHTML = '<option value="">🌐 Visão Macro (Todas)</option>';
       unidades.forEach(u => {
@@ -376,6 +463,13 @@
           const mKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
           const mName = MESES_NOME[d.getMonth()];
           mesesSet.add(JSON.stringify({ key: mKey, name: mName }));
+        }
+      });
+
+      globalDreData.forEach(d => {
+        if (d.mesKey) {
+          const mName = d.mesNome || 'Mês';
+          mesesSet.add(JSON.stringify({ key: d.mesKey, name: mName }));
         }
       });
 
@@ -441,7 +535,14 @@
         return matchUni && matchMes;
       });
 
+      const filteredDre = globalDreData.filter(d => {
+        const matchUni = !selectedUnidade || d.unidade === selectedUnidade;
+        const matchMes = !selectedMes || d.mesKey === selectedMes;
+        return matchUni && matchMes;
+      });
+
       updateKPIs(filteredRows);
+      renderDRESection(filteredDre);
 
       const groupedData = aggregateData(filteredRows, granularidade, selectedUnidade);
 
@@ -472,6 +573,100 @@
       document.getElementById('kpiNoShowQtd').innerText = `${totalNoShow} não comparecimentos`;
       document.getElementById('kpiFaturamento').innerText = `R$ ${faturamentoTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       document.getElementById('kpiTicketMedio').innerText = `R$ ${ticketMedio.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+
+    function renderDRESection(dreItems) {
+      const headerRow = document.getElementById('dreTableHeader');
+      const tbody = document.getElementById('dreTableBody');
+
+      headerRow.innerHTML = `<th class="p-3 w-72">Descrição DRE Mensal</th>`;
+      tbody.innerHTML = '';
+
+      if (dreItems.length === 0) {
+        tbody.innerHTML = `<tr><td class="p-6 text-center text-slate-400" colspan="2">Nenhum dado de DRE disponível para a seleção atual.</td></tr>`;
+        document.getElementById('dreCardReceitaLiquida').innerText = 'R$ 0,00';
+        document.getElementById('dreCardLucroBruto').innerText = 'R$ 0,00';
+        document.getElementById('dreCardLucroLiquido').innerText = 'R$ 0,00';
+        document.getElementById('dreCardMargem').innerText = '0,00%';
+        return;
+      }
+
+      dreItems.forEach(item => {
+        headerRow.innerHTML += `<th class="p-3 text-right">${item.unidade} (${item.mesNome})</th>`;
+      });
+
+      let sumReceitaLiquida = 0;
+      let sumLucroBruto = 0;
+      let sumLucroLiquido = 0;
+      let sumFaturamento = 0;
+
+      dreItems.forEach(item => {
+        sumReceitaLiquida += item.valores['(=) RECEITA LÍQUIDA'] || 0;
+        sumLucroBruto += item.valores['(=) LUCRO BRUTO'] || 0;
+        sumLucroLiquido += item.valores['(=) LUCRO LÍQUIDO'] || 0;
+        sumFaturamento += item.valores['FATURAMENTO MENSAL BRUTO'] || 0;
+      });
+
+      const margemGeral = sumFaturamento > 0 ? (sumLucroLiquido / sumFaturamento) * 100 : 0;
+
+      document.getElementById('dreCardReceitaLiquida').innerText = `R$ ${sumReceitaLiquida.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+      document.getElementById('dreCardLucroBruto').innerText = `R$ ${sumLucroBruto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+      document.getElementById('dreCardLucroLiquido').innerText = `R$ ${sumLucroLiquido.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+      document.getElementById('dreCardMargem').innerText = `${margemGeral.toFixed(2)}%`;
+
+      const rotulosDRE = [
+        'FATURAMENTO MENSAL BRUTO',
+        '(-) DEVOLUÇÃO',
+        '(-) IMPOSTO SOBRE VENDAS E SERVIÇOS',
+        '(=) RECEITA LÍQUIDA',
+        '(-) CMV PRODUTOS OS',
+        '(-) CMV PRODUTOS BALCÃO',
+        '(=) LUCRO BRUTO',
+        '(-) DESPESAS BANCÁRIAS',
+        '(-) DESPESAS GERAIS',
+        '(=) LAJIDA',
+        '(-) DEPRECIAÇÃO',
+        '(=) LUCRO LÍQUIDO',
+        'Margem Operacional'
+      ];
+
+      rotulosDRE.forEach(rotulo => {
+        const tr = document.createElement('tr');
+        const isHighlight = rotulo.startsWith('(=)');
+        const isTotal = rotulo === '(=) LUCRO LÍQUIDO';
+
+        if (isTotal) {
+          tr.className = "bg-emerald-100 font-extrabold text-emerald-900 border-t-2 border-emerald-300";
+        } else if (isHighlight) {
+          tr.className = "bg-slate-50 font-bold text-slate-800";
+        } else {
+          tr.className = "hover:bg-slate-50 text-slate-600";
+        }
+
+        const tooltip = PREMISSAS_DRE[rotulo] ? `title="${PREMISSAS_DRE[rotulo]}"` : '';
+        const iconObs = PREMISSAS_DRE[rotulo] ? `<span class="inline-block text-blue-500 font-bold ml-1 cursor-pointer" ${tooltip}>ⓘ</span>` : '';
+
+        let rowHtml = `<td class="p-3 font-semibold" ${tooltip}>${rotulo} ${iconObs}</td>`;
+
+        dreItems.forEach(item => {
+          const val = item.valores[rotulo] || 0;
+          if (rotulo === 'Margem Operacional') {
+            rowHtml += `<td class="p-3 text-right font-bold text-purple-700">${(val * (val < 1 ? 100 : 1)).toFixed(2)}%</td>`;
+          } else {
+            const isNegative = val < 0 || rotulo.startsWith('(-)');
+            const formattedVal = Math.abs(val).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const displayStr = isNegative ? `-R$ ${formattedVal}` : `R$ ${formattedVal}`;
+            const colorClass = isNegative ? 'text-rose-600' : (isHighlight ? 'text-emerald-700 font-bold' : 'text-slate-800');
+
+            rowHtml += `<td class="p-3 text-right ${colorClass}">${displayStr}</td>`;
+          }
+        });
+
+        tr.innerHTML = rowHtml;
+        tbody.appendChild(tr);
+      });
+
+      lucide.createIcons();
     }
 
     function aggregateData(rows, tipo, selectedUnidade) {
@@ -725,33 +920,80 @@
           const workbook = XLSX.read(data, { type: 'array', cellDates: true });
 
           globalRawRows = [];
+          globalDreData = [];
 
           workbook.SheetNames.forEach(sheetName => {
             const sheet = workbook.Sheets[sheetName];
-            const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, dateNF: 'yyyy-mm-dd' });
 
-            if (rows && rows.length > 1) {
-              for (let i = 1; i < rows.length; i++) {
-                const r = rows[i];
-                if (!r || r.length === 0) continue;
+            if (sheetName.toUpperCase().startsWith('DRE')) {
+              const unidadeNome = sheetName.replace(/DRE/i, '').trim().toUpperCase();
+              const matrix = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false });
 
-                const numVenda = String(r[0] || '').trim();
-                const dataAgendamento = r[4] || null;
-                const statusOS = String(r[5] || '').trim();
-                const valorOSRaw = r[6];
+              if (matrix && matrix.length > 2) {
+                const headerRow1 = matrix[1] || [];
+                
+                for (let col = 1; col < headerRow1.length; col += 3) {
+                  const tituloBloco = String(headerRow1[col] || '').trim();
+                  if (!tituloBloco) continue;
 
-                if (!numVenda && !dataAgendamento) continue;
+                  const partes = tituloBloco.split('-');
+                  const mesNome = partes[1] ? partes[1].trim() : tituloBloco;
+                  
+                  let mesIndex = MESES_NOME.findIndex(m => m.toLowerCase() === mesNome.toLowerCase());
+                  let mesKey = `2026-${String(mesIndex + 1).padStart(2, '0')}`;
+                  if (mesIndex === -1) mesKey = `2026-0${col}`;
 
-                globalRawRows.push({
-                  unidade: sheetName.toUpperCase(),
-                  numVenda: numVenda,
-                  numAtt: String(r[1] || '').trim(),
-                  numOS: String(r[2] || '').trim(),
-                  agrupamentoProduto: String(r[3] || '').trim(),
-                  dataAgendamento: dataAgendamento,
-                  statusOS: statusOS,
-                  valorOS: parseValueNumber(valorOSRaw)
-                });
+                  const blocoValores = {};
+
+                  for (let rowIdx = 2; rowIdx < matrix.length; rowIdx++) {
+                    const row = matrix[rowIdx];
+                    if (!row || row.length === 0) continue;
+
+                    const desc = String(row[col] || '').trim();
+                    const valRaw = row[col + 1];
+
+                    if (desc) {
+                      blocoValores[desc] = parseValueNumber(valRaw);
+                    }
+                  }
+
+                  if (Object.keys(blocoValores).length > 0) {
+                    globalDreData.push({
+                      unidade: unidadeNome,
+                      mesNome: mesNome,
+                      mesKey: mesKey,
+                      valores: blocoValores
+                    });
+                  }
+                }
+              }
+
+            } else {
+              const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, dateNF: 'yyyy-mm-dd' });
+
+              if (rows && rows.length > 1) {
+                for (let i = 1; i < rows.length; i++) {
+                  const r = rows[i];
+                  if (!r || r.length === 0) continue;
+
+                  const numVenda = String(r[0] || '').trim();
+                  const dataAgendamento = r[4] || null;
+                  const statusOS = String(r[5] || '').trim();
+                  const valorOSRaw = r[6];
+
+                  if (!numVenda && !dataAgendamento) continue;
+
+                  globalRawRows.push({
+                    unidade: sheetName.toUpperCase(),
+                    numVenda: numVenda,
+                    numAtt: String(r[1] || '').trim(),
+                    numOS: String(r[2] || '').trim(),
+                    agrupamentoProduto: String(r[3] || '').trim(),
+                    dataAgendamento: dataAgendamento,
+                    statusOS: statusOS,
+                    valorOS: parseValueNumber(valorOSRaw)
+                  });
+                }
               }
             }
           });
@@ -761,7 +1003,7 @@
           saveDataToCloud();
         } catch (err) {
           console.error(err);
-          alert('Ocorreu um erro ao processar o Excel. Verifique o formato do arquivo.');
+          alert('Ocorreu um erro ao processar o arquivo. Verifique o formato do Excel.');
         }
       };
       reader.readAsArrayBuffer(file);
