@@ -341,6 +341,11 @@
       loadDataFromCloud();
     });
 
+    function cleanString(str) {
+      if (!str) return '';
+      return String(str).replace(/\s+/g, ' ').trim().toUpperCase();
+    }
+
     function parseValueNumber(val) {
       if (val === null || val === undefined || val === '') return 0;
       if (typeof val === 'number') return isNaN(val) ? 0 : val;
@@ -575,6 +580,29 @@
       document.getElementById('kpiTicketMedio').innerText = `R$ ${ticketMedio.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
 
+    function getDreValue(itemValores, targetKey) {
+      if (!itemValores) return 0;
+      const cleanTarget = cleanString(targetKey);
+
+      for (const [k, v] of Object.entries(itemValores)) {
+        if (cleanString(k) === cleanTarget) {
+          return v;
+        }
+      }
+
+      // Fallback específico para variações de CMV PRODUTOS OS
+      if (cleanTarget.includes('CMV') && cleanTarget.includes('OS')) {
+        for (const [k, v] of Object.entries(itemValores)) {
+          const cK = cleanString(k);
+          if (cK.includes('CMV') && cK.includes('OS') && !cK.includes('BALCÃO')) {
+            return v;
+          }
+        }
+      }
+
+      return 0;
+    }
+
     function renderDRESection(dreItems) {
       const headerRow = document.getElementById('dreTableHeader');
       const tbody = document.getElementById('dreTableBody');
@@ -601,10 +629,10 @@
       let sumFaturamento = 0;
 
       dreItems.forEach(item => {
-        sumReceitaLiquida += item.valores['(=) RECEITA LÍQUIDA'] || 0;
-        sumLucroBruto += item.valores['(=) LUCRO BRUTO'] || 0;
-        sumLucroLiquido += item.valores['(=) LUCRO LÍQUIDO'] || 0;
-        sumFaturamento += item.valores['FATURAMENTO MENSAL BRUTO'] || 0;
+        sumReceitaLiquida += getDreValue(item.valores, '(=) RECEITA LÍQUIDA');
+        sumLucroBruto += getDreValue(item.valores, '(=) LUCRO BRUTO');
+        sumLucroLiquido += getDreValue(item.valores, '(=) LUCRO LÍQUIDO');
+        sumFaturamento += getDreValue(item.valores, 'FATURAMENTO MENSAL BRUTO');
       });
 
       const margemGeral = sumFaturamento > 0 ? (sumLucroLiquido / sumFaturamento) * 100 : 0;
@@ -649,7 +677,7 @@
         let rowHtml = `<td class="p-3 font-semibold" ${tooltip}>${rotulo} ${iconObs}</td>`;
 
         dreItems.forEach(item => {
-          const val = item.valores[rotulo] || 0;
+          const val = getDreValue(item.valores, rotulo);
           if (rotulo === 'Margem Operacional') {
             const pct = (val * (val < 1 && val > -1 ? 100 : 1)).toFixed(2);
             rowHtml += `<td class="p-3 text-right font-extrabold ${isTotal ? 'text-white' : 'text-purple-700'}">${pct}%</td>`;
@@ -969,9 +997,9 @@
                       const row = matrix[rowIdx];
                       if (!row) continue;
 
-                      const desc = String(row[col] || '').trim();
+                      const desc = cleanString(row[col]);
+                      if (!desc) continue;
                       
-                      // Busca o valor numérico nas colunas adjacentes da tabela (col+1, col+2, col+3)
                       let valRaw = row[col + 1];
                       if ((valRaw === undefined || valRaw === null || String(valRaw).trim() === '') && row[col + 2] !== undefined) {
                         valRaw = row[col + 2];
@@ -980,9 +1008,7 @@
                         valRaw = row[col + 3];
                       }
 
-                      if (desc) {
-                        blocoValores[desc] = parseValueNumber(valRaw);
-                      }
+                      blocoValores[desc] = parseValueNumber(valRaw);
                     }
 
                     if (Object.keys(blocoValores).length > 0) {
