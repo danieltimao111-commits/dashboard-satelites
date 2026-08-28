@@ -33,7 +33,7 @@
       
       <div class="flex items-center gap-4">
         <div class="bg-white p-2 rounded-lg shadow-inner flex items-center justify-center h-12 border border-slate-200">
-          <img src="LOGO.jpg" alt="Logo Autoglass" class="h-full w-auto object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <img src="logo-autoglass.png" alt="Logo Autoglass" class="h-full w-auto object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
           <span style="display:none;" class="font-bold text-blue-900 text-sm">AUTOGLASS</span>
         </div>
 
@@ -146,87 +146,6 @@
       </div>
     </section>
 
-    <!-- SEÇÃO DRE GERENCIAL -->
-    <section class="glass-card p-5 border-l-4 border-l-emerald-600">
-      <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
-        <div>
-          <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wide flex items-center gap-2">
-            <i data-lucide="calculator" class="w-4 h-4 text-emerald-600"></i> Demonstração do Resultado do Exercício (DRE)
-          </h3>
-          <p class="text-xs text-slate-500">Resultado financeiro consolidado por unidade e mês</p>
-        </div>
-      </div>
-
-      <!-- CARDS DE RESUMO DRE -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-          <p class="text-xs font-semibold text-slate-500 uppercase">Receita Líquida</p>
-          <p id="dreCardReceitaLiquida" class="text-lg font-bold text-slate-800 my-1">R$ 0,00</p>
-          <span class="text-[10px] text-slate-400">Após impostos e devoluções</span>
-        </div>
-
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-          <p class="text-xs font-semibold text-slate-500 uppercase">Lucro Bruto</p>
-          <p id="dreCardLucroBruto" class="text-lg font-bold text-blue-600 my-1">R$ 0,00</p>
-          <span class="text-[10px] text-slate-400">Receita Líquida - CMV</span>
-        </div>
-
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-          <p class="text-xs font-semibold text-slate-500 uppercase">Lucro Líquido</p>
-          <p id="dreCardLucroLiquido" class="text-lg font-bold text-emerald-600 my-1">R$ 0,00</p>
-          <span class="text-[10px] text-slate-400">Resultado final do período</span>
-        </div>
-
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-          <p class="text-xs font-semibold text-slate-500 uppercase">Margem Operacional</p>
-          <p id="dreCardMargem" class="text-lg font-bold text-purple-600 my-1">0,00%</p>
-          <span class="text-[10px] text-slate-400">Lucro Líquido / Faturamento</span>
-        </div>
-      </div>
-
-      <!-- TABELA DRE COMPARATIVA -->
-      <div class="overflow-x-auto border border-slate-200 rounded-xl mb-6">
-        <table class="w-full text-left text-xs text-slate-600">
-          <thead class="bg-slate-900 text-white uppercase font-semibold">
-            <tr id="dreTableHeader">
-              <th class="p-3 w-72">Descrição DRE Mensal</th>
-            </tr>
-          </thead>
-          <tbody id="dreTableBody" class="divide-y divide-slate-200 bg-white"></tbody>
-        </table>
-      </div>
-
-      <!-- PAINEL DE PREMISSAS E OBSERVAÇÕES DA DRE -->
-      <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2 mb-3">
-          <i data-lucide="info" class="w-4 h-4 text-blue-600"></i> Premissas & Observações de Cálculo da DRE
-        </h4>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-          <div class="flex items-start gap-2 bg-white p-2.5 rounded-lg border border-slate-200">
-            <span class="font-bold text-slate-700 whitespace-nowrap">(-) Imposto s/ Vendas e Serviços:</span>
-            <span class="text-slate-600">% de proporcionalidade da DRE de MG79</span>
-          </div>
-
-          <div class="flex items-start gap-2 bg-white p-2.5 rounded-lg border border-slate-200">
-            <span class="font-bold text-slate-700 whitespace-nowrap">(-) Despesas Bancárias:</span>
-            <span class="text-slate-600">% de proporcionalidade da DRE de MG79</span>
-          </div>
-
-          <div class="flex items-start gap-2 bg-white p-2.5 rounded-lg border border-slate-200">
-            <span class="font-bold text-slate-700 whitespace-nowrap">(-) Despesas Gerais:</span>
-            <span class="text-slate-600">Custo com CMO, Deslocamento, Aluguel e Baixa de Consumo</span>
-          </div>
-
-          <div class="flex items-start gap-2 bg-white p-2.5 rounded-lg border border-slate-200">
-            <span class="font-bold text-slate-700 whitespace-nowrap">(-) Depreciação:</span>
-            <span class="text-slate-600">Depreciação de ativos patrimoniais</span>
-          </div>
-        </div>
-      </div>
-
-    </section>
-
     <!-- GRÁFICOS GERENCIAIS OPERACIONAIS -->
     <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div class="glass-card p-5">
@@ -310,6 +229,87 @@
           <tbody id="satelitesTableBody" class="divide-y divide-slate-100"></tbody>
         </table>
       </div>
+    </section>
+
+    <!-- SEÇÃO DRE GERENCIAL (NO FINAL DO RELATÓRIO) -->
+    <section class="glass-card p-5 border-l-4 border-l-emerald-600">
+      <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
+        <div>
+          <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wide flex items-center gap-2">
+            <i data-lucide="calculator" class="w-4 h-4 text-emerald-600"></i> Demonstração do Resultado do Exercício (DRE)
+          </h3>
+          <p class="text-xs text-slate-500">Resultado financeiro consolidado por unidade e mês</p>
+        </div>
+      </div>
+
+      <!-- CARDS DE RESUMO DRE -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <p class="text-xs font-semibold text-slate-500 uppercase">Receita Líquida</p>
+          <p id="dreCardReceitaLiquida" class="text-lg font-bold text-slate-800 my-1">R$ 0,00</p>
+          <span class="text-[10px] text-slate-400">Após impostos e devoluções</span>
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <p class="text-xs font-semibold text-slate-500 uppercase">Lucro Bruto</p>
+          <p id="dreCardLucroBruto" class="text-lg font-bold text-blue-600 my-1">R$ 0,00</p>
+          <span class="text-[10px] text-slate-400">Receita Líquida - CMV</span>
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <p class="text-xs font-semibold text-slate-500 uppercase">Lucro Líquido</p>
+          <p id="dreCardLucroLiquido" class="text-lg font-bold text-emerald-600 my-1">R$ 0,00</p>
+          <span class="text-[10px] text-slate-400">Resultado final do período</span>
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <p class="text-xs font-semibold text-slate-500 uppercase">Margem Operacional</p>
+          <p id="dreCardMargem" class="text-lg font-bold text-purple-600 my-1">0,00%</p>
+          <span class="text-[10px] text-slate-400">Lucro Líquido / Faturamento</span>
+        </div>
+      </div>
+
+      <!-- TABELA DRE COMPARATIVA -->
+      <div class="overflow-x-auto border border-slate-200 rounded-xl mb-6">
+        <table class="w-full text-left text-xs text-slate-600">
+          <thead class="bg-blue-900 text-white font-semibold">
+            <tr id="dreTableHeader">
+              <th class="p-3 w-72">Descrição DRE Mensal</th>
+            </tr>
+          </thead>
+          <tbody id="dreTableBody" class="divide-y divide-slate-200 bg-white"></tbody>
+        </table>
+      </div>
+
+      <!-- PAINEL DE PREMISSAS E OBSERVAÇÕES DA DRE -->
+      <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2 mb-3">
+          <i data-lucide="info" class="w-4 h-4 text-blue-600"></i> Premissas & Observações de Cálculo da DRE
+        </h4>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          <div class="flex items-start gap-2 bg-white p-2.5 rounded-lg border border-slate-200">
+            <span class="font-bold text-slate-700 whitespace-nowrap">(-) Imposto s/ Vendas e Serviços:</span>
+            <span class="text-slate-600">% de proporcionalidade da DRE de MG79</span>
+          </div>
+
+          <div class="flex items-start gap-2 bg-white p-2.5 rounded-lg border border-slate-200">
+            <span class="font-bold text-slate-700 whitespace-nowrap">(-) Despesas Bancárias:</span>
+            <span class="text-slate-600">% de proporcionalidade da DRE de MG79</span>
+          </div>
+
+          <div class="flex items-start gap-2 bg-white p-2.5 rounded-lg border border-slate-200">
+            <span class="font-bold text-slate-700 whitespace-nowrap">(-) Despesas Gerais:</span>
+            <span class="text-slate-600">Custo com CMO, Deslocamento, Aluguel e Baixa de Consumo</span>
+          </div>
+
+          <div class="flex items-start gap-2 bg-white p-2.5 rounded-lg border border-slate-200">
+            <span class="font-bold text-slate-700 whitespace-nowrap">(-) Depreciação:</span>
+            <span class="text-slate-600">Depreciação de ativos patrimoniais</span>
+          </div>
+        </div>
+      </div>
+
     </section>
 
   </main>
@@ -592,7 +592,7 @@
       }
 
       dreItems.forEach(item => {
-        headerRow.innerHTML += `<th class="p-3 text-right">${item.unidade} (${item.mesNome})</th>`;
+        headerRow.innerHTML += `<th class="p-3 text-right bg-blue-800 text-white font-bold">${item.unidade} - ${item.mesNome}</th>`;
       });
 
       let sumReceitaLiquida = 0;
@@ -636,11 +636,11 @@
         const isTotal = rotulo === '(=) LUCRO LÍQUIDO';
 
         if (isTotal) {
-          tr.className = "bg-emerald-100 font-extrabold text-emerald-900 border-t-2 border-emerald-300";
+          tr.className = "bg-emerald-600 text-white font-black text-sm border-t-2 border-emerald-700";
         } else if (isHighlight) {
-          tr.className = "bg-slate-50 font-bold text-slate-800";
+          tr.className = "bg-blue-50 font-bold text-slate-900 border-t border-b border-slate-200";
         } else {
-          tr.className = "hover:bg-slate-50 text-slate-600";
+          tr.className = "hover:bg-slate-50 text-slate-700";
         }
 
         const tooltip = PREMISSAS_DRE[rotulo] ? `title="${PREMISSAS_DRE[rotulo]}"` : '';
@@ -651,12 +651,21 @@
         dreItems.forEach(item => {
           const val = item.valores[rotulo] || 0;
           if (rotulo === 'Margem Operacional') {
-            rowHtml += `<td class="p-3 text-right font-bold text-purple-700">${(val * (val < 1 ? 100 : 1)).toFixed(2)}%</td>`;
+            const pct = (val * (val < 1 && val > -1 ? 100 : 1)).toFixed(2);
+            rowHtml += `<td class="p-3 text-right font-extrabold ${isTotal ? 'text-white' : 'text-purple-700'}">${pct}%</td>`;
           } else {
             const isNegative = val < 0 || rotulo.startsWith('(-)');
             const formattedVal = Math.abs(val).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             const displayStr = isNegative ? `-R$ ${formattedVal}` : `R$ ${formattedVal}`;
-            const colorClass = isNegative ? 'text-rose-600' : (isHighlight ? 'text-emerald-700 font-bold' : 'text-slate-800');
+            
+            let colorClass = 'text-slate-800';
+            if (isTotal) {
+              colorClass = 'text-white font-black';
+            } else if (isNegative) {
+              colorClass = 'text-rose-600 font-medium';
+            } else if (isHighlight) {
+              colorClass = 'text-emerald-700 font-bold';
+            }
 
             rowHtml += `<td class="p-3 text-right ${colorClass}">${displayStr}</td>`;
           }
@@ -930,40 +939,52 @@
               const matrix = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false });
 
               if (matrix && matrix.length > 2) {
-                const headerRow1 = matrix[1] || [];
-                
-                for (let col = 1; col < headerRow1.length; col += 3) {
-                  const tituloBloco = String(headerRow1[col] || '').trim();
-                  if (!tituloBloco) continue;
-
-                  const partes = tituloBloco.split('-');
-                  const mesNome = partes[1] ? partes[1].trim() : tituloBloco;
-                  
-                  let mesIndex = MESES_NOME.findIndex(m => m.toLowerCase() === mesNome.toLowerCase());
-                  let mesKey = `2026-${String(mesIndex + 1).padStart(2, '0')}`;
-                  if (mesIndex === -1) mesKey = `2026-0${col}`;
-
-                  const blocoValores = {};
-
-                  for (let rowIdx = 2; rowIdx < matrix.length; rowIdx++) {
-                    const row = matrix[rowIdx];
-                    if (!row || row.length === 0) continue;
-
-                    const desc = String(row[col] || '').trim();
-                    const valRaw = row[col + 1];
-
-                    if (desc) {
-                      blocoValores[desc] = parseValueNumber(valRaw);
-                    }
+                let headerRowIdx = -1;
+                for (let r = 0; r < Math.min(matrix.length, 5); r++) {
+                  const rowStr = (matrix[r] || []).join(' ').toUpperCase();
+                  if (rowStr.includes('UNIDADE SATÉLITE') || rowStr.includes('GUARULHOS') || rowStr.includes('INDAIATUBA')) {
+                    headerRowIdx = r;
+                    break;
                   }
+                }
 
-                  if (Object.keys(blocoValores).length > 0) {
-                    globalDreData.push({
-                      unidade: unidadeNome,
-                      mesNome: mesNome,
-                      mesKey: mesKey,
-                      valores: blocoValores
-                    });
+                if (headerRowIdx === -1) headerRowIdx = 1;
+
+                const headerRow = matrix[headerRowIdx] || [];
+
+                for (let col = 0; col < headerRow.length; col++) {
+                  const cellText = String(headerRow[col] || '').trim();
+                  
+                  if (cellText && (cellText.toUpperCase().includes('UNIDADE SATÉLITE') || cellText.toUpperCase().includes('GUARULHOS') || cellText.toUpperCase().includes('INDAIATUBA'))) {
+                    const partes = cellText.split('-');
+                    const mesNome = partes[1] ? partes[1].trim() : 'Geral';
+
+                    let mesIndex = MESES_NOME.findIndex(m => m.toLowerCase() === mesNome.toLowerCase());
+                    let mesKey = `2026-${String(mesIndex + 1).padStart(2, '0')}`;
+                    if (mesIndex === -1) mesKey = `2026-01`;
+
+                    const blocoValores = {};
+
+                    for (let rowIdx = headerRowIdx + 1; rowIdx < matrix.length; rowIdx++) {
+                      const row = matrix[rowIdx];
+                      if (!row) continue;
+
+                      const desc = String(row[col] || '').trim();
+                      const valRaw = row[col + 1];
+
+                      if (desc) {
+                        blocoValores[desc] = parseValueNumber(valRaw);
+                      }
+                    }
+
+                    if (Object.keys(blocoValores).length > 0) {
+                      globalDreData.push({
+                        unidade: unidadeNome,
+                        mesNome: mesNome,
+                        mesKey: mesKey,
+                        valores: blocoValores
+                      });
+                    }
                   }
                 }
               }
