@@ -24,7 +24,7 @@
 
   <!-- Status de Sincronização em Nuvem -->
   <div id="cloudStatus" class="bg-blue-600 text-white text-xs py-1 px-4 text-center font-medium transition-all">
-    ☁️ Carregando dados da nuvem...
+    ☁️ Carregando dados do painel...
   </div>
 
   <!-- Header Gerencial -->
@@ -316,12 +316,12 @@
 
   <script>
     // ==========================================
-    // CONFIGURAÇÕES DO GITHUB (NOVO BANCO DE DADOS)
+    // CONFIGURAÇÕES DO GITHUB (DADOS DO SEU REPOSITÓRIO)
+    // A SENHA (TOKEN) FOI RETIRADA DO CÓDIGO POR SEGURANÇA
     // ==========================================
-    const GITHUB_TOKEN = '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'; // Token inserido
-    const REPO_OWNER = 'danieltimao111-commits'; // Seu usuário do GitHub
-    const REPO_NAME = 'dashboard-satelites'; // O nome do seu repositório
-    const FILE_PATH = 'dados_planilha.json'; // Nome do arquivo de banco de dados que será criado/atualizado
+    const REPO_OWNER = 'danieltimao111-commits'; 
+    const REPO_NAME = 'dashboard-satelites'; 
+    const FILE_PATH = 'dados_planilha.json'; 
 
     lucide.createIcons();
 
@@ -358,9 +358,7 @@
       let s = String(val).replace('R$', '').replace('%', '').replace(/\s/g, '').trim();
       if (!s) return 0;
 
-      if (s.includes(',')) {
-        s = s.replace(/\./g, '').replace(',', '.');
-      }
+      if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.');
       
       const parsed = parseFloat(s);
       return isNaN(parsed) ? 0 : parsed;
@@ -385,21 +383,35 @@
     }
 
     // ==========================================
+    // GERENCIAMENTO SEGURO DO TOKEN DO GITHUB
+    // ==========================================
+    function getGitHubToken() {
+      let token = localStorage.getItem('github_token_dashboard');
+      if (!token) {
+        token = prompt("🔐 SENHA NECESSÁRIA PARA ATUALIZAR:\n\nPor favor, cole aqui o seu Token do GitHub (ghp_...).\nEle ficará salvo neste navegador para as próximas atualizações.");
+        if (token && token.trim() !== '') {
+          localStorage.setItem('github_token_dashboard', token.trim());
+        }
+      }
+      return token ? token.trim() : null;
+    }
+
+    function clearGitHubToken() {
+      localStorage.removeItem('github_token_dashboard');
+    }
+
+    // ==========================================
     // FUNÇÕES INTEGRADAS COM O GITHUB API
     // ==========================================
     async function loadDataFromCloud() {
       const statusEl = document.getElementById('cloudStatus');
       statusEl.className = "bg-blue-600 text-white text-xs py-1 px-4 text-center font-medium";
-      statusEl.innerText = "☁️ Carregando dados da nuvem...";
+      statusEl.innerText = "☁️ Carregando dados do painel...";
 
       try {
-        // Tenta buscar da API do GitHub para pegar a versão mais recente e ignorar o cache do navegador
-        const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
-          headers: {
-            'Authorization': `token ${GITHUB_TOKEN}`,
-            'Accept': 'application/vnd.github.v3.raw'
-          }
-        });
+        // Tenta ler o arquivo JSON público, permitindo que qualquer um veja os dados sem pedir senha!
+        const cacheBuster = new Date().getTime();
+        const response = await fetch(`dados_planilha.json?v=${cacheBuster}`);
 
         if (response.ok) {
           const result = await response.json();
@@ -411,24 +423,29 @@
 
           const dataAtualizacao = result.updatedAtSatelites ? new Date(result.updatedAtSatelites).toLocaleString('pt-BR') : 'recente';
           statusEl.className = "bg-emerald-600 text-white text-xs py-1 px-4 text-center font-medium";
-          statusEl.innerText = `✓ Dados carregados via GitHub (Última atualização: ${dataAtualizacao})`;
-        } else if (response.status === 404) {
-          statusEl.className = "bg-amber-600 text-white text-xs py-1 px-4 text-center font-medium";
-          statusEl.innerText = "⚠️ Banco de dados ainda não existe no GitHub. Faça o primeiro upload da planilha.";
+          statusEl.innerText = `✓ Dados carregados com sucesso (Última atualização: ${dataAtualizacao})`;
         } else {
-          throw new Error(`HTTP ${response.status}`);
+          statusEl.className = "bg-amber-600 text-white text-xs py-1 px-4 text-center font-medium";
+          statusEl.innerText = "⚠️ Banco de dados ainda não existe. Faça o primeiro upload da planilha para criar.";
         }
       } catch (err) {
         console.error(err);
         statusEl.className = "bg-rose-600 text-white text-xs py-1 px-4 text-center font-medium";
-        statusEl.innerText = `❌ Erro ao carregar dados. Verifique seu Token do GitHub.`;
+        statusEl.innerText = `❌ Erro ao ler os dados do painel.`;
       }
     }
 
     async function saveDataToCloud() {
+      // 0. Pede o Token com segurança antes de fazer o envio
+      const token = getGitHubToken();
+      if (!token) {
+        alert("⚠️ Atualização cancelada. É necessário inserir o Token do GitHub para salvar dados.");
+        return;
+      }
+
       const statusEl = document.getElementById('cloudStatus');
       statusEl.className = "bg-amber-500 text-white text-xs py-1 px-4 text-center font-medium";
-      statusEl.innerText = "⏳ Enviando dados para o GitHub...";
+      statusEl.innerText = "⏳ Enviando dados pesados para o GitHub...";
 
       try {
         const payloadData = {
@@ -437,28 +454,28 @@
           updatedAtSatelites: new Date().toISOString()
         };
 
-        // GitHub exige que o conteúdo seja encodado em Base64
         const jsonStr = JSON.stringify(payloadData);
-        // Tratamento para Base64 com caracteres UTF-8 (acentos e cedilhas)
         const contentBase64 = btoa(unescape(encodeURIComponent(jsonStr)));
-
         let fileSha = undefined;
 
-        // 1. Precisamos verificar se o arquivo já existe para pegar o "sha" (identificador de versão)
+        // 1. Verifica se o arquivo já existe e pega o identificador (usando o token)
         const getRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
-          headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
+          headers: { 'Authorization': `token ${token}` }
         });
 
         if (getRes.ok) {
           const fileData = await getRes.json();
           fileSha = fileData.sha;
+        } else if (getRes.status === 401) {
+          clearGitHubToken();
+          throw new Error("O Token salvo é inválido ou foi cancelado. Tente enviar de novo para digitar um Token novo.");
         }
 
-        // 2. Faz o envio (PUT) criando ou sobrescrevendo o arquivo
+        // 2. Faz o upload criando ou sobrescrevendo o arquivo
         const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
           method: 'PUT',
           headers: {
-            'Authorization': `token ${GITHUB_TOKEN}`,
+            'Authorization': `token ${token}`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
@@ -469,18 +486,19 @@
         });
 
         if (!putRes.ok) {
+          if (putRes.status === 401) clearGitHubToken();
           const errBody = await putRes.text();
           throw new Error(`Erro GitHub (${putRes.status}): ${errBody}`);
         }
 
         statusEl.className = "bg-emerald-600 text-white text-xs py-1 px-4 text-center font-medium";
         statusEl.innerText = "✓ Planilha salva no GitHub com sucesso!";
-        alert('Dados salvos no seu repositório GitHub de forma definitiva!\nO GitHub Actions processará em alguns segundos.');
+        alert('Planilha gigante salva no GitHub com sucesso!\n\n🕒 Importante: O GitHub leva cerca de 1 a 2 minutos para atualizar o site público com esses novos dados.');
       } catch (err) {
         console.error(err);
         statusEl.className = "bg-rose-600 text-white text-xs py-1 px-4 text-center font-medium";
-        statusEl.innerText = `❌ Erro ao enviar atualização para o GitHub.`;
-        alert(`Não foi possível salvar (${err.message}). Certifique-se de que o Token e as permissões estão corretas.`);
+        statusEl.innerText = `❌ Erro ao enviar atualização.`;
+        alert(`Não foi possível salvar os dados:\n\n${err.message}`);
       }
     }
     // ==========================================
@@ -1099,7 +1117,10 @@
 
           initDataProcessing();
           applyGlobalFilters();
+          
+          // Chama a função que pede a senha e envia para a nuvem
           saveDataToCloud();
+          
         } catch (err) {
           console.error(err);
           alert('Ocorreu um erro ao processar o arquivo. Verifique o formato do Excel.');
