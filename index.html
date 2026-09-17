@@ -46,7 +46,7 @@
       </div>
 
       <div class="flex items-center gap-3">
-        <!-- BOTÃO NOVO PARA RESETAR SENHA -->
+        <!-- BOTÃO PARA RESETAR SENHA -->
         <button onclick="resetToken()" class="text-xs font-bold text-slate-700 bg-slate-200 hover:bg-slate-300 px-3 py-2 rounded-lg transition" title="Limpar senha salva">
           🔑 Resetar Senha
         </button>
@@ -394,12 +394,10 @@
       if (!token) {
         token = prompt("🔐 SENHA NECESSÁRIA PARA ATUALIZAR:\n\nPor favor, cole aqui o seu Token do GitHub (ghp_...).\nEle ficará salvo neste navegador para as próximas atualizações.");
         if (token && token.trim() !== '') {
-          // TRATAMENTO: Remove qualquer caractere invisível, quebra de linha ou acento copiado sem querer
           token = token.replace(/[^\x20-\x7E]/g, '').trim();
           localStorage.setItem('github_token_dashboard', token);
         }
       } else {
-        // Limpa mesmo se já estiver salvo para garantir
         token = token.replace(/[^\x20-\x7E]/g, '').trim();
       }
       return token ? token : null;
@@ -507,7 +505,6 @@
       } catch (err) {
         console.error(err);
         
-        // Se o erro for de caractere invisível na senha, apagamos ela na mesma hora
         if (err.message.includes('ISO-8859-1') || err.message.includes('headers')) {
           clearGitHubToken();
           alert("Ocorreu um erro com caracteres invisíveis no seu Token salvo.\nA senha suja foi apagada da memória.\n\nPor favor, tente subir a planilha novamente e cole o Token com cuidado.");
@@ -651,16 +648,40 @@
       document.getElementById('kpiTicketMedio').innerText = `R$ ${ticketMedio.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
 
+    // Função normalizadora robusta para ignorar acentos e variações de plural/digitação (ex: Devolução vs Devolucao)
+    function normalizeText(str) {
+      if (!str) return '';
+      return String(str)
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+        .replace(/[^a-zA-Z0-9]/g, '')     // Remove caracteres especiais, parênteses e espaços
+        .toUpperCase();
+    }
+
     function getDreValue(itemValores, targetKey) {
       if (!itemValores) return 0;
       const cleanTarget = cleanString(targetKey);
+      const normTarget = normalizeText(targetKey);
 
+      // 1. Tenta correspondência exata normalizada
       for (const [k, v] of Object.entries(itemValores)) {
-        if (cleanString(k) === cleanTarget) {
+        if (cleanString(k) === cleanTarget || normalizeText(k) === normTarget) {
           return v;
         }
       }
 
+      // 2. Regra inteligente para DEVOLUÇÃO (caso venha sem acento, com outro prefixo ou no plural)
+      if (normTarget.includes('DEVOLU')) {
+        for (const [k, v] of Object.entries(itemValores)) {
+          const nK = normalizeText(k);
+          if (nK.includes('DEVOLU')) {
+            return v;
+          }
+        }
+        return 0;
+      }
+
+      // 3. Regras para CMV
       if (cleanTarget.includes('BALCÃO') || cleanTarget.includes('BALCAO')) {
         for (const [k, v] of Object.entries(itemValores)) {
           const cK = cleanString(k);
@@ -1135,8 +1156,6 @@
 
           initDataProcessing();
           applyGlobalFilters();
-          
-          // Chama a função que pede a senha e envia para a nuvem
           saveDataToCloud();
           
         } catch (err) {
