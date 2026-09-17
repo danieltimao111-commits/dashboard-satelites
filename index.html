@@ -24,7 +24,7 @@
 
   <!-- Status de Sincronização em Nuvem -->
   <div id="cloudStatus" class="bg-blue-600 text-white text-xs py-1 px-4 text-center font-medium transition-all">
-    ☁️ Sincronizando dados com a nuvem...
+    ☁️ Carregando dados da nuvem...
   </div>
 
   <!-- Header Gerencial -->
@@ -315,8 +315,13 @@
   </main>
 
   <script>
-    const JSONBIN_BIN_ID = '6a8ef4baf5f4af5e29450c24';
-    const JSONBIN_MASTER_KEY = '$2a$10$oozFSlEFkacYuzRbLpFgROQrC5YKMK11lxM0ZqaYTS7oV2Jn1Egje';
+    // ==========================================
+    // CONFIGURAÇÕES DO GITHUB (NOVO BANCO DE DADOS)
+    // ==========================================
+    const GITHUB_TOKEN = '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'; // Token inserido
+    const REPO_OWNER = 'danieltimao111-commits'; // Seu usuário do GitHub
+    const REPO_NAME = 'dashboard-satelites'; // O nome do seu repositório
+    const FILE_PATH = 'dados_planilha.json'; // Nome do arquivo de banco de dados que será criado/atualizado
 
     lucide.createIcons();
 
@@ -379,76 +384,106 @@
       return isNaN(parsed.getTime()) ? null : parsed;
     }
 
+    // ==========================================
+    // FUNÇÕES INTEGRADAS COM O GITHUB API
+    // ==========================================
     async function loadDataFromCloud() {
       const statusEl = document.getElementById('cloudStatus');
       statusEl.className = "bg-blue-600 text-white text-xs py-1 px-4 text-center font-medium";
-      statusEl.innerText = "☁️ Sincronizando dados com a nuvem...";
+      statusEl.innerText = "☁️ Carregando dados da nuvem...";
 
       try {
-        const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
-          headers: { 'X-Master-Key': JSONBIN_MASTER_KEY }
+        // Tenta buscar da API do GitHub para pegar a versão mais recente e ignorar o cache do navegador
+        const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+          headers: {
+            'Authorization': `token ${GITHUB_TOKEN}`,
+            'Accept': 'application/vnd.github.v3.raw'
+          }
         });
 
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-        const result = await response.json();
-        if (result.record) {
-          globalRawRows = result.record.satelitesRaw || [];
-          globalDreData = result.record.dreData || [];
-
+        if (response.ok) {
+          const result = await response.json();
+          globalRawRows = result.satelitesRaw || [];
+          globalDreData = result.dreData || [];
+          
           initDataProcessing();
           applyGlobalFilters();
 
-          const dataAtualizacao = result.record.updatedAtSatelites ? new Date(result.record.updatedAtSatelites).toLocaleString('pt-BR') : 'recente';
+          const dataAtualizacao = result.updatedAtSatelites ? new Date(result.updatedAtSatelites).toLocaleString('pt-BR') : 'recente';
           statusEl.className = "bg-emerald-600 text-white text-xs py-1 px-4 text-center font-medium";
-          statusEl.innerText = `✓ Dados de Satélites e DRE sincronizados (Última atualização: ${dataAtualizacao})`;
-        } else {
+          statusEl.innerText = `✓ Dados carregados via GitHub (Última atualização: ${dataAtualizacao})`;
+        } else if (response.status === 404) {
           statusEl.className = "bg-amber-600 text-white text-xs py-1 px-4 text-center font-medium";
-          statusEl.innerText = "⚠️ Nenhum dado encontrado na nuvem. Faça o upload da planilha.";
+          statusEl.innerText = "⚠️ Banco de dados ainda não existe no GitHub. Faça o primeiro upload da planilha.";
+        } else {
+          throw new Error(`HTTP ${response.status}`);
         }
       } catch (err) {
         console.error(err);
         statusEl.className = "bg-rose-600 text-white text-xs py-1 px-4 text-center font-medium";
-        statusEl.innerText = `❌ Erro ao carregar dados (${err.message}).`;
+        statusEl.innerText = `❌ Erro ao carregar dados. Verifique seu Token do GitHub.`;
       }
     }
 
     async function saveDataToCloud() {
       const statusEl = document.getElementById('cloudStatus');
       statusEl.className = "bg-amber-500 text-white text-xs py-1 px-4 text-center font-medium";
-      statusEl.innerText = "⏳ Enviando novos dados para a nuvem...";
+      statusEl.innerText = "⏳ Enviando dados para o GitHub...";
 
       try {
-        const payload = {
+        const payloadData = {
           satelitesRaw: globalRawRows,
           dreData: globalDreData,
           updatedAtSatelites: new Date().toISOString()
         };
 
-        const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Master-Key': JSONBIN_MASTER_KEY
-          },
-          body: JSON.stringify(payload)
+        // GitHub exige que o conteúdo seja encodado em Base64
+        const jsonStr = JSON.stringify(payloadData);
+        // Tratamento para Base64 com caracteres UTF-8 (acentos e cedilhas)
+        const contentBase64 = btoa(unescape(encodeURIComponent(jsonStr)));
+
+        let fileSha = undefined;
+
+        // 1. Precisamos verificar se o arquivo já existe para pegar o "sha" (identificador de versão)
+        const getRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+          headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
         });
 
-        if (!response.ok) {
-          const errBody = await response.text();
-          throw new Error(`HTTP ${response.status}: ${errBody}`);
+        if (getRes.ok) {
+          const fileData = await getRes.json();
+          fileSha = fileData.sha;
+        }
+
+        // 2. Faz o envio (PUT) criando ou sobrescrevendo o arquivo
+        const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${GITHUB_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: 'Dashboard: Atualização de banco de dados via XLSX',
+            content: contentBase64,
+            sha: fileSha
+          })
+        });
+
+        if (!putRes.ok) {
+          const errBody = await putRes.text();
+          throw new Error(`Erro GitHub (${putRes.status}): ${errBody}`);
         }
 
         statusEl.className = "bg-emerald-600 text-white text-xs py-1 px-4 text-center font-medium";
-        statusEl.innerText = "✓ Planilha e DRE salvas na nuvem com sucesso!";
-        alert('Dados salvos na nuvem com sucesso!');
+        statusEl.innerText = "✓ Planilha salva no GitHub com sucesso!";
+        alert('Dados salvos no seu repositório GitHub de forma definitiva!\nO GitHub Actions processará em alguns segundos.');
       } catch (err) {
         console.error(err);
         statusEl.className = "bg-rose-600 text-white text-xs py-1 px-4 text-center font-medium";
-        statusEl.innerText = `❌ Erro ao enviar atualização (${err.message}).`;
-        alert(`Não foi possível salvar na nuvem (${err.message}).`);
+        statusEl.innerText = `❌ Erro ao enviar atualização para o GitHub.`;
+        alert(`Não foi possível salvar (${err.message}). Certifique-se de que o Token e as permissões estão corretas.`);
       }
     }
+    // ==========================================
 
     function initDataProcessing() {
       const unidadesOp = globalRawRows.map(d => d.unidade);
@@ -584,14 +619,12 @@
       if (!itemValores) return 0;
       const cleanTarget = cleanString(targetKey);
 
-      // Correspondência exata normalizada
       for (const [k, v] of Object.entries(itemValores)) {
         if (cleanString(k) === cleanTarget) {
           return v;
         }
       }
 
-      // Regra estrita para CMV BALCÃO vs CMV OS
       if (cleanTarget.includes('BALCÃO') || cleanTarget.includes('BALCAO')) {
         for (const [k, v] of Object.entries(itemValores)) {
           const cK = cleanString(k);
@@ -599,7 +632,7 @@
             return v;
           }
         }
-        return 0; // Garante que fica zerado se não houver entrada explícita de BALCÃO
+        return 0; 
       }
 
       if (cleanTarget.includes('CMV') && cleanTarget.includes('OS')) {
