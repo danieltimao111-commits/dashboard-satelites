@@ -46,6 +46,11 @@
       </div>
 
       <div class="flex items-center gap-3">
+        <!-- BOTÃO NOVO PARA RESETAR SENHA -->
+        <button onclick="resetToken()" class="text-xs font-bold text-slate-700 bg-slate-200 hover:bg-slate-300 px-3 py-2 rounded-lg transition" title="Limpar senha salva">
+          🔑 Resetar Senha
+        </button>
+
         <label class="cursor-pointer bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow transition flex items-center gap-2">
           <i data-lucide="file-up" class="w-4 h-4"></i>
           <span>Atualizar Planilha Satélites (.xlsx)</span>
@@ -316,8 +321,7 @@
 
   <script>
     // ==========================================
-    // CONFIGURAÇÕES DO GITHUB (DADOS DO SEU REPOSITÓRIO)
-    // A SENHA (TOKEN) FOI RETIRADA DO CÓDIGO POR SEGURANÇA
+    // CONFIGURAÇÕES DO GITHUB
     // ==========================================
     const REPO_OWNER = 'danieltimao111-commits'; 
     const REPO_NAME = 'dashboard-satelites'; 
@@ -390,14 +394,24 @@
       if (!token) {
         token = prompt("🔐 SENHA NECESSÁRIA PARA ATUALIZAR:\n\nPor favor, cole aqui o seu Token do GitHub (ghp_...).\nEle ficará salvo neste navegador para as próximas atualizações.");
         if (token && token.trim() !== '') {
-          localStorage.setItem('github_token_dashboard', token.trim());
+          // TRATAMENTO: Remove qualquer caractere invisível, quebra de linha ou acento copiado sem querer
+          token = token.replace(/[^\x20-\x7E]/g, '').trim();
+          localStorage.setItem('github_token_dashboard', token);
         }
+      } else {
+        // Limpa mesmo se já estiver salvo para garantir
+        token = token.replace(/[^\x20-\x7E]/g, '').trim();
       }
-      return token ? token.trim() : null;
+      return token ? token : null;
     }
 
     function clearGitHubToken() {
       localStorage.removeItem('github_token_dashboard');
+    }
+
+    function resetToken() {
+      clearGitHubToken();
+      alert('Chave de acesso apagada da memória do navegador!\n\nNa próxima vez que você for subir a planilha, o sistema pedirá o Token novamente.');
     }
 
     // ==========================================
@@ -409,7 +423,6 @@
       statusEl.innerText = "☁️ Carregando dados do painel...";
 
       try {
-        // Tenta ler o arquivo JSON público, permitindo que qualquer um veja os dados sem pedir senha!
         const cacheBuster = new Date().getTime();
         const response = await fetch(`dados_planilha.json?v=${cacheBuster}`);
 
@@ -436,7 +449,6 @@
     }
 
     async function saveDataToCloud() {
-      // 0. Pede o Token com segurança antes de fazer o envio
       const token = getGitHubToken();
       if (!token) {
         alert("⚠️ Atualização cancelada. É necessário inserir o Token do GitHub para salvar dados.");
@@ -458,7 +470,6 @@
         const contentBase64 = btoa(unescape(encodeURIComponent(jsonStr)));
         let fileSha = undefined;
 
-        // 1. Verifica se o arquivo já existe e pega o identificador (usando o token)
         const getRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
           headers: { 'Authorization': `token ${token}` }
         });
@@ -468,10 +479,9 @@
           fileSha = fileData.sha;
         } else if (getRes.status === 401) {
           clearGitHubToken();
-          throw new Error("O Token salvo é inválido ou foi cancelado. Tente enviar de novo para digitar um Token novo.");
+          throw new Error("O Token salvo é inválido ou foi cancelado pelo GitHub. A senha velha foi apagada. Tente enviar de novo para colocar um Token novo.");
         }
 
-        // 2. Faz o upload criando ou sobrescrevendo o arquivo
         const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
           method: 'PUT',
           headers: {
@@ -493,12 +503,20 @@
 
         statusEl.className = "bg-emerald-600 text-white text-xs py-1 px-4 text-center font-medium";
         statusEl.innerText = "✓ Planilha salva no GitHub com sucesso!";
-        alert('Planilha gigante salva no GitHub com sucesso!\n\n🕒 Importante: O GitHub leva cerca de 1 a 2 minutos para atualizar o site público com esses novos dados.');
+        alert('Planilha salva no GitHub com sucesso!\n\n🕒 Importante: O GitHub leva cerca de 1 a 2 minutos para atualizar o site público com esses novos dados.');
       } catch (err) {
         console.error(err);
+        
+        // Se o erro for de caractere invisível na senha, apagamos ela na mesma hora
+        if (err.message.includes('ISO-8859-1') || err.message.includes('headers')) {
+          clearGitHubToken();
+          alert("Ocorreu um erro com caracteres invisíveis no seu Token salvo.\nA senha suja foi apagada da memória.\n\nPor favor, tente subir a planilha novamente e cole o Token com cuidado.");
+        } else {
+          alert(`Não foi possível salvar os dados:\n\n${err.message}`);
+        }
+        
         statusEl.className = "bg-rose-600 text-white text-xs py-1 px-4 text-center font-medium";
         statusEl.innerText = `❌ Erro ao enviar atualização.`;
-        alert(`Não foi possível salvar os dados:\n\n${err.message}`);
       }
     }
     // ==========================================
